@@ -26,10 +26,14 @@ import { ClockService } from './clock.service';
           </header>
 
           <div class="pass-avatar">
-            <picture>
-              <source srcset="assets/img/profile.webp" type="image/webp" />
-              <img src="assets/img/profile.jpg" [alt]="name()" width="240" height="240" loading="lazy" decoding="async" />
-            </picture>
+            @if (photo()) {
+              <img [src]="photo()" [alt]="name()" width="240" height="240" loading="lazy" decoding="async" />
+            } @else {
+              <picture>
+                <source srcset="assets/img/profile.webp" type="image/webp" />
+                <img src="assets/img/profile.jpg" [alt]="name()" width="240" height="240" loading="lazy" decoding="async" />
+              </picture>
+            }
             <span class="pass-ring" aria-hidden="true"></span>
             <span class="pass-verified" aria-hidden="true">
               <svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8" /></svg>
@@ -62,6 +66,8 @@ import { ClockService } from './clock.service';
 export class IdBadgeComponent implements AfterViewInit, OnDestroy {
   name = input.required<string>();
   role = input.required<string>();
+  /** Admin-uploaded photo URL; empty → bundled default photo. */
+  photo = input<string | undefined>('');
 
   clock = inject(ClockService);
   private motion = inject(MotionService);

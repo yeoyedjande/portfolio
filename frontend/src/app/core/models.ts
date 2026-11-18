@@ -20,6 +20,8 @@ export interface SiteSettings {
   github_url: string;
   cv_url: string;
   contact_lead: string;
+  /** Versioned URL of the admin-uploaded photo; "" means use the default. */
+  photo_url?: string;
 }
 
 export interface StackItem {

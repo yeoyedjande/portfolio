@@ -22,6 +22,7 @@ from .models import (
     AdminUser,
     ContactMessage,
     Experience,
+    MediaAsset,
     PageView,
     Project,
     SiteSettings,
@@ -58,7 +59,7 @@ def _snapshot_preserved_data() -> dict:
     Uses raw SQL so it works against an outdated schema; anything that cannot
     be read is simply skipped.
     """
-    preserved = {"admins": [], "messages": [], "page_views": []}
+    preserved = {"admins": [], "messages": [], "page_views": [], "media": []}
     inspector = inspect(engine)
     with engine.connect() as conn:
         if inspector.has_table("admin_users"):
@@ -93,6 +94,14 @@ def _snapshot_preserved_data() -> dict:
                     text(f"SELECT {', '.join(model_cols)} FROM page_views")
                 ).fetchall()
                 preserved["page_views"] = [dict(row._mapping) for row in rows]
+            except Exception:
+                pass
+        if inspector.has_table("media_assets"):
+            try:
+                rows = conn.execute(
+                    text("SELECT key, content_type, data FROM media_assets")
+                ).fetchall()
+                preserved["media"] = [dict(row._mapping) for row in rows]
             except Exception:
                 pass
     return preserved
@@ -140,6 +149,10 @@ def _restore_preserved_data(db, preserved: dict) -> None:
                 )
             )
         print(f"Preserved {len(preserved['page_views'])} page view(s) across the reset.")
+    if preserved.get("media"):
+        for asset in preserved["media"]:
+            db.add(MediaAsset(key=asset["key"], content_type=asset["content_type"], data=asset["data"]))
+        print(f"Preserved {len(preserved['media'])} media asset(s) across the reset.")
     # Make restored rows visible to the existence checks below (autoflush is off)
     db.flush()
 
@@ -147,14 +160,14 @@ def _restore_preserved_data(db, preserved: dict) -> None:
 def seed() -> None:
     settings = get_settings()
     assert_production_secrets(settings)
-    preserved = {"admins": [], "messages": [], "page_views": []}
+    preserved = {"admins": [], "messages": [], "page_views": [], "media": []}
 
     if not schema_matches():
         if settings.reset_on_schema_mismatch:
             print(
                 "WARNING: database schema is out of date — dropping all tables "
                 "and re-seeding (disable with RESET_ON_SCHEMA_MISMATCH=false). "
-                "Admin account, contact messages and analytics will be preserved."
+                "Admin account, contact messages, analytics and media will be preserved."
             )
             preserved = _snapshot_preserved_data()
             Base.metadata.drop_all(bind=engine)

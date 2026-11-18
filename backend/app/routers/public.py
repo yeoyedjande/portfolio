@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from sqlalchemy.orm import Session
 
 from .. import schemas
@@ -14,6 +14,7 @@ from ..i18n import normalize_lang, resolve
 from ..models import (
     ContactMessage,
     Experience,
+    MediaAsset,
     PageView,
     Project,
     SiteSettings,
@@ -32,9 +33,40 @@ def get_site_settings(db: Session) -> SiteSettings:
     return settings
 
 
+PHOTO_KEY = "profile_photo"
+
+
+def photo_url(db: Session) -> str:
+    """Versioned public URL of the uploaded profile photo, or "" if none.
+
+    The version (upload timestamp) busts browser/CDN caches on every change,
+    so the image itself can be cached forever.
+    """
+    row = (
+        db.query(MediaAsset.updated_at)
+        .filter(MediaAsset.key == PHOTO_KEY)
+        .first()
+    )
+    if row is None:
+        return ""
+    return f"/api/photo?v={int(row.updated_at.timestamp())}"
+
+
+@router.get("/photo", include_in_schema=False)
+def get_photo(db: Session = Depends(get_db)):
+    asset = db.query(MediaAsset).filter(MediaAsset.key == PHOTO_KEY).first()
+    if asset is None:
+        raise HTTPException(status_code=404, detail="No photo uploaded")
+    return Response(
+        content=asset.data,
+        media_type=asset.content_type,
+        headers={"Cache-Control": "public, max-age=31536000, immutable"},
+    )
+
+
 # ---------- Language resolution (i18n dict -> plain string/list) ----------
 
-def _settings_public(s: SiteSettings, lang: str) -> schemas.PublicSettings:
+def _settings_public(s: SiteSettings, lang: str, photo: str = "") -> schemas.PublicSettings:
     return schemas.PublicSettings(
         full_name=s.full_name,
         headline=resolve(s.headline, lang),
@@ -51,6 +83,7 @@ def _settings_public(s: SiteSettings, lang: str) -> schemas.PublicSettings:
         github_url=s.github_url,
         cv_url=resolve(s.cv_url, lang),
         contact_lead=resolve(s.contact_lead, lang),
+        photo_url=photo,
     )
 
 
@@ -91,7 +124,7 @@ def get_content(lang: str = Query("en"), db: Session = Depends(get_db)):
     """Aggregated payload used by the public site: one request, all content."""
     lang = normalize_lang(lang)
     return schemas.PortfolioContent(
-        settings=_settings_public(get_site_settings(db), lang),
+        settings=_settings_public(get_site_settings(db), lang, photo_url(db)),
         stack=[
             schemas.PublicStackItem(
                 id=i.id, category=resolve(i.category, lang), name=i.name, sort_order=i.sort_order

@@ -5,7 +5,7 @@ dicts (lists of strings for *_list fields) — see app/i18n.py.
 """
 from datetime import datetime, timezone
 
-from sqlalchemy import JSON, Boolean, DateTime, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, Integer, JSON, LargeBinary, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .database import Base
@@ -148,3 +148,21 @@ class ContactMessage(Base):
     language: Mapped[str] = mapped_column(String(5), default="en")  # visitor's preferred language
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     read: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class MediaAsset(Base):
+    """Small binary assets editable from the admin (e.g. the profile photo).
+
+    Stored in the database rather than on disk: container filesystems
+    (Railway, Docker) are wiped on every deploy, the database is not.
+    A dedicated table also keeps the startup schema check from resetting
+    existing content — new tables are simply created.
+    """
+
+    __tablename__ = "media_assets"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    key: Mapped[str] = mapped_column(String(40), unique=True, index=True)
+    content_type: Mapped[str] = mapped_column(String(40))
+    data: Mapped[bytes] = mapped_column(LargeBinary)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
