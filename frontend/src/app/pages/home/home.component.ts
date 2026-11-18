@@ -71,8 +71,25 @@ export class HomeComponent {
     return match ? { number: match[1], label: match[2] } : { number: null, label: impact };
   }
 
-  pad(n: number): string {
-    return String(n).padStart(2, '0');
+  /** Line icons (24×24 path data) for the principle and value cards,
+   *  cycled by position — decorative only. */
+  readonly principleIcons = [
+    'M11 3a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM21 21l-4.3-4.3', // understand: search
+    'M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5', // maintainable: layers
+    'M12 22s8-3 8-10V5l-8-3-8 3v7c0 7 8 10 8 10zM9 12l2 2 4-4', // secure: shield
+    'M22 11.1V12a10 10 0 1 1-5.9-9.1M22 4 12 14l-3-3', // reliable: check
+  ];
+  readonly valueIcons = [
+    'M3 7h18v13H3zM8 7V4h8v3M3 13h18', // business-oriented: briefcase
+    'M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5', // full stack: layers
+    'M12 22s8-3 8-10V5l-8-3-8 3v7c0 7 8 10 8 10zM9 12l2 2 4-4', // secure APIs: shield
+    'M22 11.1V12a10 10 0 1 1-5.9-9.1M22 4 12 14l-3-3', // reliable delivery: check
+    'M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6', // enterprise: building
+    'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20', // international: globe
+  ];
+
+  icon(set: string[], index: number): string {
+    return set[index % set.length];
   }
 
   /** Two marquee rows: even-indexed items on the first, odd on the second,
