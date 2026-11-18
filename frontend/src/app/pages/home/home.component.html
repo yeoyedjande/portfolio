@@ -60,30 +60,34 @@
   <section class="section about" id="about">
     <div class="container">
       <p class="sec-label" appReveal><span>01</span>{{ 'about.eyebrow' | transloco }}</p>
-      <div class="about-grid">
-        <h2 class="about-title" [appSplit]="content.settings.about_title"></h2>
-        @if (content.settings.about_paragraphs.length) {
-          <p class="about-statement" [appScrub]="content.settings.about_paragraphs[0]"></p>
-        }
-      </div>
 
-      <div class="about-bottom">
-        <div class="about-more" appReveal>
-          @for (paragraph of content.settings.about_paragraphs.slice(1); track $index) {
-            <p>{{ paragraph }}</p>
+      <div class="about-layout">
+        <aside class="about-aside">
+          <app-id-badge [name]="content.settings.full_name" [role]="content.settings.headline" />
+        </aside>
+
+        <div class="about-main">
+          <h2 class="about-title" [appSplit]="content.settings.about_title" [accentLast]="true"></h2>
+
+          @if (content.settings.about_paragraphs.length) {
+            <p class="about-statement" [appScrub]="content.settings.about_paragraphs[0]"></p>
           }
-        </div>
-        <div class="principles">
-          <p class="principles-title" appReveal>{{ 'about.howIWork' | transloco }}</p>
-          <ol>
-            @for (principle of content.settings.principles; track $index) {
-              <li class="principle" appReveal [style.--d]="$index">
-                <span class="principle-index">{{ pad($index + 1) }}</span>
-                <span class="principle-text">{{ principle }}</span>
-                <i class="principle-arrow" aria-hidden="true">→</i>
-              </li>
-            }
-          </ol>
+          @for (paragraph of content.settings.about_paragraphs.slice(1); track $index) {
+            <p class="about-more" appReveal>{{ paragraph }}</p>
+          }
+
+          <div class="principles">
+            <p class="principles-title" appReveal>{{ 'about.howIWork' | transloco }}</p>
+            <ol class="principles-grid">
+              @for (principle of content.settings.principles; track $index) {
+                <li class="principle" appReveal [style.--d]="$index">
+                  <span class="principle-index">{{ pad($index + 1) }}</span>
+                  <span class="principle-text">{{ principle }}</span>
+                  <i class="principle-arrow" aria-hidden="true">↗</i>
+                </li>
+              }
+            </ol>
+          </div>
         </div>
       </div>
     </div>
@@ -187,9 +191,10 @@
         <p class="sec-label" appReveal><span>04</span>{{ 'experience.eyebrow' | transloco }}</p>
         <h2 class="sec-title" [appSplit]="'experience.title' | transloco"></h2>
       </div>
-      <ol class="xp-list">
+      <ol class="xp-list" appTimeline>
         @for (experience of content.experiences; track experience.id) {
           <li class="xp-row" appReveal>
+            <span class="xp-dot" aria-hidden="true"></span>
             <div class="xp-when">
               <span class="xp-period">{{ experience.period }}</span>
               <span class="xp-org">{{ experience.organization }}</span>

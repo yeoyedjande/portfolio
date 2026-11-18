@@ -13,6 +13,7 @@ import { IntroComponent } from './shared/intro.component';
   imports: [RouterOutlet, TranslocoPipe, HeaderComponent, FooterComponent, IntroComponent],
   template: `
     <app-intro />
+    <div class="scroll-progress" aria-hidden="true"></div>
     <button class="skip-link" type="button" (click)="skipToContent()">{{ 'nav.skip' | transloco }}</button>
     <app-header />
     <main id="main" class="site-main" tabindex="-1">
