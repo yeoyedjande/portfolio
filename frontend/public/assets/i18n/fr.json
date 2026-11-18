@@ -17,7 +17,16 @@
   },
   "about": {
     "eyebrow": "À propos",
-    "howIWork": "Ma façon de travailler"
+    "howIWork": "Ma façon de travailler",
+    "badge": {
+      "pass": "Access pass",
+      "base": "Base",
+      "time": "Heure locale",
+      "languages": "Langues",
+      "languagesValue": "Français · Anglais",
+      "status": "Statut",
+      "available": "Disponible"
+    }
   },
   "work": {
     "eyebrow": "Projets sélectionnés",

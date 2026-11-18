@@ -11,12 +11,14 @@ import { ClockService } from '../../shared/clock.service';
 import { CountUpDirective } from '../../shared/count-up.directive';
 import { DotFieldComponent } from '../../shared/dot-field.component';
 import { HeroVisualComponent } from '../../shared/hero-visual.component';
+import { IdBadgeComponent } from '../../shared/id-badge.component';
 import { MagneticDirective } from '../../shared/magnetic.directive';
 import { ProjectVisualComponent } from '../../shared/project-visual.component';
 import { RevealDirective } from '../../shared/reveal.directive';
 import { ScrubComponent } from '../../shared/scrub.component';
 import { SplitComponent } from '../../shared/split.component';
 import { StackCardsDirective } from '../../shared/stack-cards.directive';
+import { TimelineDirective } from '../../shared/timeline.directive';
 
 @Component({
   selector: 'app-home',
@@ -27,12 +29,14 @@ import { StackCardsDirective } from '../../shared/stack-cards.directive';
     CountUpDirective,
     DotFieldComponent,
     HeroVisualComponent,
+    IdBadgeComponent,
     MagneticDirective,
     ProjectVisualComponent,
     RevealDirective,
     ScrubComponent,
     SplitComponent,
     StackCardsDirective,
+    TimelineDirective,
   ],
   templateUrl: './home.component.html',
 })

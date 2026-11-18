@@ -107,6 +107,8 @@ export class MotionService {
       if (hide !== this.headerHidden()) this.zone.run(() => this.headerHidden.set(hide));
       this.lastY = y;
     }
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    document.documentElement.style.setProperty('--scroll-p', max > 0 ? (y / max).toFixed(4) : '0');
     const scrolled = y > 20;
     if (scrolled !== this.scrolled()) this.zone.run(() => this.scrolled.set(scrolled));
     this.listeners.forEach((fn) => fn(y));
