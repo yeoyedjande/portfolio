@@ -7,10 +7,16 @@ import { map } from 'rxjs';
 import { ApiService } from '../../core/api.service';
 import { LanguageService } from '../../core/language.service';
 import { StackItem } from '../../core/models';
+import { ClockService } from '../../shared/clock.service';
 import { CountUpDirective } from '../../shared/count-up.directive';
+import { DotFieldComponent } from '../../shared/dot-field.component';
 import { HeroVisualComponent } from '../../shared/hero-visual.component';
+import { MagneticDirective } from '../../shared/magnetic.directive';
 import { ProjectVisualComponent } from '../../shared/project-visual.component';
 import { RevealDirective } from '../../shared/reveal.directive';
+import { ScrubComponent } from '../../shared/scrub.component';
+import { SplitComponent } from '../../shared/split.component';
+import { StackCardsDirective } from '../../shared/stack-cards.directive';
 
 @Component({
   selector: 'app-home',
@@ -19,15 +25,21 @@ import { RevealDirective } from '../../shared/reveal.directive';
     RouterLink,
     TranslocoPipe,
     CountUpDirective,
+    DotFieldComponent,
     HeroVisualComponent,
+    MagneticDirective,
     ProjectVisualComponent,
     RevealDirective,
+    ScrubComponent,
+    SplitComponent,
+    StackCardsDirective,
   ],
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
   api = inject(ApiService);
   language = inject(LanguageService);
+  clock = inject(ClockService);
 
   /** Stack items grouped by category, preserving order of first appearance. */
   stackGroups$ = this.api.content$.pipe(
@@ -55,7 +67,15 @@ export class HomeComponent {
     return match ? { number: match[1], label: match[2] } : { number: null, label: impact };
   }
 
-  orgInitial(organization: string): string {
-    return (organization.trim()[0] ?? '•').toUpperCase();
+  pad(n: number): string {
+    return String(n).padStart(2, '0');
+  }
+
+  /** Two marquee rows: even-indexed items on the first, odd on the second,
+   *  so the rows read differently while drifting in opposite directions. */
+  marqueeNames(stack: StackItem[], row: number): string[] {
+    const names = stack.map((s) => s.name);
+    const half = names.filter((_, i) => i % 2 === row);
+    return half.length ? half : names;
   }
 }

@@ -2,12 +2,18 @@
   "nav": {
     "home": "Accueil",
     "work": "Projets",
-    "contact": "Contact"
+    "contact": "Contact",
+    "experience": "Parcours",
+    "stack": "Stack",
+    "menu": "Menu",
+    "skip": "Aller au contenu"
   },
   "hero": {
     "viewWork": "Voir mes projets",
     "downloadCv": "Télécharger le CV",
-    "contactMe": "Me contacter"
+    "contactMe": "Me contacter",
+    "hello": "Bonjour, je suis",
+    "available": "Disponible pour des opportunités"
   },
   "about": {
     "eyebrow": "À propos",
@@ -15,10 +21,11 @@
   },
   "work": {
     "eyebrow": "Projets sélectionnés",
-    "title": "Des projets à impact opérationnel réel",
+    "title": "Des projets à impact *opérationnel* réel",
     "note": "Les projets d'entreprise sont présentés de façon anonymisée par confidentialité.",
     "viewCaseStudy": "Voir l'étude de cas",
-    "featured": "À la une"
+    "featured": "À la une",
+    "open": "Ouvrir"
   },
   "caseStudy": {
     "back": "Tous les projets",
@@ -31,23 +38,24 @@
     "learnings": "Enseignements / valeur métier",
     "discuss": "Discuter d'un projet similaire",
     "notFound": "Projet introuvable",
-    "backToWork": "Retour aux projets"
+    "backToWork": "Retour aux projets",
+    "next": "Projet suivant"
   },
   "stack": {
     "eyebrow": "Stack technique",
-    "title": "Mes outils de travail"
+    "title": "Mes outils de *travail*"
   },
   "experience": {
     "eyebrow": "Expérience",
-    "title": "Parcours professionnel"
+    "title": "Parcours *professionnel*"
   },
   "values": {
     "eyebrow": "Pourquoi travailler avec moi",
-    "title": "Ce que vous pouvez attendre"
+    "title": "Ce que vous pouvez *attendre*"
   },
   "contact": {
     "eyebrow": "Contact",
-    "title": "Construisons quelque chose de fiable.",
+    "title": "Construisons quelque chose de *fiable.*",
     "form": {
       "name": "Nom",
       "namePlaceholder": "Votre nom complet",
@@ -69,7 +77,10 @@
   },
   "footer": {
     "poweredBy": "Ce portfolio est propulsé par un back-office sur mesure Angular / FastAPI.",
-    "backToTop": "Haut de page"
+    "backToTop": "Haut de page",
+    "reach": "Me joindre",
+    "local": "Heure locale",
+    "timezone": "GMT+0 — recouvre les horaires de travail de l’Europe et du Canada (matin)."
   },
   "meta": {
     "homeTitle": "Yeo Yedjande — Développeur Full Stack Senior",
