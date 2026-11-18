@@ -5,7 +5,7 @@
   <title>Yeo Yedjande — Senior Full Stack Developer</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#fafbfe">
+  <meta name="theme-color" content="#f2f0eb">
   <meta name="description" content="Senior Full Stack Developer building secure, scalable and business-oriented web platforms with Angular, Python/FastAPI, Laravel, PostgreSQL, Docker and Keycloak. Available for international opportunities.">
   <meta name="author" content="Yeo Yedjande">
   <link rel="canonical" href="https://yeoyedjande.com/">
@@ -37,34 +37,36 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@1,9..144,300..500,100,1&family=Geist+Mono:wght@400;500&family=Geist:wght@300..700&display=swap">
+  <script>
+    // The first-visit intro starts on ink: paint the boot screen ink too so
+    // there is no paper → ink flash while Angular boots.
+    (function () {
+      try {
+        var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var seen = sessionStorage.getItem('intro_seen') === '1';
+        if (!reduced && !seen && location.pathname.indexOf('/admin') !== 0) {
+          document.documentElement.className += ' boot-dark';
+        }
+      } catch (e) {}
+    })();
+  </script>
   <style>
-    /* Critical boot styles — prevent the white flash before Angular loads */
-    html { background: #f7f8fd; }
-    body { margin: 0; background: #f7f8fd; }
-    .boot-screen {
-      position: fixed; inset: 0; display: grid; place-items: center;
-      background: #f7f8fd;
-    }
-    .boot-mark {
-      width: 52px; height: 52px; border-radius: 14px;
-      display: grid; place-items: center;
-      background: linear-gradient(100deg, #4f6bf5, #8b5cf6, #22c7e6);
-      color: #fff; font: 800 18px/1 Inter, system-ui, sans-serif;
-      box-shadow: 0 10px 34px -8px rgba(84, 87, 240, 0.5);
-      animation: boot-pulse 1.2s ease-in-out infinite;
-    }
-    @keyframes boot-pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(0.94); opacity: 0.75; }
-    }
+    /* Critical boot styles — no white flash before Angular loads */
+    html, body { margin: 0; background: #f2f0eb; }
+    .boot-screen { position: fixed; inset: 0; display: grid; place-items: center; background: #f2f0eb; }
+    .boot-mark { width: 44px; height: 44px; border-radius: 50%; background: #0d0d10; display: grid; place-items: center; animation: boot-pulse 1.2s ease-in-out infinite; }
+    .boot-mark svg { width: 24px; height: 24px; fill: none; stroke: #f2f0eb; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+    html.boot-dark, html.boot-dark body, html.boot-dark .boot-screen { background: #0d0d10; }
+    html.boot-dark .boot-mark { background: transparent; }
+    @keyframes boot-pulse { 50% { transform: scale(0.92); opacity: 0.6; } }
     @media (prefers-reduced-motion: reduce) { .boot-mark { animation: none; } }
   </style>
 </head>
 <body>
   <app-root>
     <div class="boot-screen" aria-label="Loading">
-      <div class="boot-mark">YY</div>
+      <div class="boot-mark"><svg viewBox="0 0 32 32"><path d="M5 6l7 10v10M19 6l-7 10M19 6l4 6 4-6M23 12v14"/></svg></div>
     </div>
   </app-root>
 </body>

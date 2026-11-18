@@ -5,20 +5,20 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { ApiService } from '../../core/api.service';
 import { LanguageService } from '../../core/language.service';
+import { MagneticDirective } from '../../shared/magnetic.directive';
+import { SplitComponent } from '../../shared/split.component';
 
 @Component({
   selector: 'app-contact',
-  imports: [AsyncPipe, ReactiveFormsModule, TranslocoPipe],
+  imports: [AsyncPipe, ReactiveFormsModule, TranslocoPipe, MagneticDirective, SplitComponent],
   template: `
-    <section class="section">
+    <section class="contact-page">
       <div class="container">
-        <div class="section-head">
-          <p class="section-eyebrow">{{ 'contact.eyebrow' | transloco }}</p>
-          <h1 class="section-title">{{ 'contact.title' | transloco }}</h1>
-        </div>
+        <p class="sec-label hero-in" style="--d: 0"><span>✉</span>{{ 'contact.eyebrow' | transloco }}</p>
+        <h1 class="contact-title" [appSplit]="'contact.title' | transloco" [splitImmediate]="true"></h1>
 
         <div class="contact-grid">
-          <div>
+          <div class="hero-in" style="--d: 4">
             @if (api.content$ | async; as content) {
               <p class="contact-lead">{{ content.settings.contact_lead }}</p>
               <div class="contact-links">
@@ -50,7 +50,7 @@ import { LanguageService } from '../../core/language.service';
             }
           </div>
 
-          <div>
+          <div class="contact-form-wrap hero-in" style="--d: 5">
             @if (sent()) {
               <div class="alert alert-success" role="status">{{ 'contact.form.sent' | transloco }}</div>
             } @else {
@@ -96,8 +96,9 @@ import { LanguageService } from '../../core/language.service';
                 }
 
                 <div>
-                  <button class="btn btn-primary" type="submit" [disabled]="sending()">
-                    {{ (sending() ? 'contact.form.sending' : 'contact.form.send') | transloco }}
+                  <button class="btn btn-primary" type="submit" appMagnetic="0.2" [disabled]="sending()">
+                    <span>{{ (sending() ? 'contact.form.sending' : 'contact.form.send') | transloco }}</span>
+                    <i class="btn-ico" aria-hidden="true">→</i>
                   </button>
                 </div>
               </form>
