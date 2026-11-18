@@ -85,10 +85,10 @@
     }
   },
   "footer": {
-    "poweredBy": "Ce portfolio est propulsé par un back-office sur mesure Angular / FastAPI.",
+    "poweredBy": "Ce portfolio est propulsé par du code, des idées et beaucoup de passion.",
     "backToTop": "Haut de page",
-    "reach": "Me joindre",
-    "local": "Heure locale",
+    "reach": "Me contacter",
+    "local": "Ma base locale",
     "timezone": "GMT+0 — recouvre les horaires de travail de l’Europe et du Canada (matin)."
   },
   "meta": {

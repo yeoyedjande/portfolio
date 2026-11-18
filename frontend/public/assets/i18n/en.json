@@ -85,10 +85,10 @@
     }
   },
   "footer": {
-    "poweredBy": "This portfolio is powered by a custom Angular / FastAPI admin dashboard.",
+    "poweredBy": "This portfolio runs on code, ideas and a lot of passion.",
     "backToTop": "Back to top",
     "reach": "Get in touch",
-    "local": "Local time",
+    "local": "Home base",
     "timezone": "GMT+0 — overlaps European and Canadian (morning) working hours."
   },
   "meta": {

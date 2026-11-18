@@ -10,15 +10,17 @@ import { LanguageService } from '../core/language.service';
 import { MotionService } from '../core/motion.service';
 import { ClockService } from './clock.service';
 import { MagneticDirective } from './magnetic.directive';
+import { WaveLinesComponent } from './wave-lines.component';
 
 /** "Curtain" footer: pinned beneath the page, revealed as the last section
  *  scrolls away. The giant wordmark is the signature of the site. */
 @Component({
   selector: 'app-footer',
-  imports: [AsyncPipe, RouterLink, TranslocoPipe, MagneticDirective],
+  imports: [AsyncPipe, RouterLink, TranslocoPipe, MagneticDirective, WaveLinesComponent],
   template: `
     @if (!isAdmin()) {
       <footer class="site-footer">
+        <app-wave-lines />
         <div class="footer-inner">
           <div class="footer-top">
             <div class="footer-col">
@@ -45,7 +47,7 @@ import { MagneticDirective } from './magnetic.directive';
           </div>
 
           <a class="footer-wordmark" [routerLink]="['/', language.lang()]" aria-label="Yéo Yédjandé">
-            <span>Yéo</span><span>Yédjandé</span>
+            <span>Yéo</span><span class="footer-wordmark-last">Yédjandé</span>
           </a>
 
           <div class="footer-bottom">

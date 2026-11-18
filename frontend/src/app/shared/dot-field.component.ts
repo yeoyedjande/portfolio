@@ -72,8 +72,8 @@ export class DotFieldComponent implements AfterViewInit, OnDestroy {
           alpha *= Math.min(1, 1.25 - y / height);
           if (alpha <= 0.01) continue;
           ctx.fillStyle = accent > 0.05
-            ? `rgba(43, 59, 255, ${Math.min(alpha, 0.95)})`
-            : `rgba(14, 14, 16, ${alpha})`;
+            ? `rgba(8, 126, 189, ${Math.min(alpha, 0.95)})`
+            : `rgba(10, 22, 40, ${alpha})`;
           ctx.beginPath();
           ctx.arc(x, y, Math.max(0.4, size), 0, Math.PI * 2);
           ctx.fill();
