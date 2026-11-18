@@ -48,7 +48,8 @@
     "discuss": "Discuter d'un projet similaire",
     "notFound": "Projet introuvable",
     "backToWork": "Retour aux projets",
-    "next": "Projet suivant"
+    "next": "Projet suivant",
+    "onThisPage": "Sur cette page"
   },
   "stack": {
     "eyebrow": "Stack technique",

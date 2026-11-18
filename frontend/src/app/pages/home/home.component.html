@@ -75,7 +75,7 @@
   <!-- ============================= ABOUT ============================== -->
   <section class="section about" id="about">
     <div class="container">
-      <p class="sec-label" appReveal><span>01</span>{{ 'about.eyebrow' | transloco }}</p>
+      <p class="sec-label" appReveal>{{ 'about.eyebrow' | transloco }}</p>
 
       <div class="about-layout">
         <aside class="about-aside">
@@ -97,7 +97,7 @@
             <ol class="principles-grid">
               @for (principle of content.settings.principles; track $index) {
                 <li class="principle" appReveal [style.--d]="$index">
-                  <span class="principle-index">{{ pad($index + 1) }}</span>
+                  <span class="principle-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path [attr.d]="icon(principleIcons, $index)" /></svg></span>
                   <span class="principle-text">{{ principle }}</span>
                   <i class="principle-arrow" aria-hidden="true">↗</i>
                 </li>
@@ -113,11 +113,10 @@
   <section class="sheet sheet-ink" id="work">
     <div class="container">
       <div class="sec-head">
-        <p class="sec-label" appReveal><span>02</span>{{ 'work.eyebrow' | transloco }}</p>
+        <p class="sec-label" appReveal>{{ 'work.eyebrow' | transloco }}</p>
         <div class="sec-head-row">
           <h2 class="sec-title" [appSplit]="'work.title' | transloco"></h2>
           <div class="sec-aside" appReveal>
-            <span class="sec-count">{{ pad(content.projects.length) }}</span>
             <p>{{ 'work.note' | transloco }}</p>
           </div>
         </div>
@@ -134,7 +133,6 @@
             <div class="deck-inner">
               <div class="deck-info">
                 <div class="deck-top">
-                  <span class="deck-index">{{ pad(i + 1) }} <em>/ {{ pad(content.projects.length) }}</em></span>
                   <span class="deck-role">{{ project.role }}</span>
                 </div>
                 <h3 class="deck-title">{{ project.title }}</h3>
@@ -181,13 +179,13 @@
 
       <div class="container">
         <div class="sec-head">
-          <p class="sec-label" appReveal><span>03</span>{{ 'stack.eyebrow' | transloco }}</p>
+          <p class="sec-label" appReveal>{{ 'stack.eyebrow' | transloco }}</p>
           <h2 class="sec-title" [appSplit]="'stack.title' | transloco"></h2>
         </div>
         <div class="stack-grid">
           @for (group of stackGroups$ | async; track group.category; let gi = $index) {
             <div class="stack-col" appReveal [style.--d]="gi">
-              <p class="stack-cat"><span>{{ pad(gi + 1) }}</span>{{ group.category }}</p>
+              <p class="stack-cat">{{ group.category }}</p>
               <ul>
                 @for (item of group.items; track item.id) {
                   <li>{{ item.name }}</li>
@@ -204,7 +202,7 @@
   <section class="sheet sheet-paper" id="experience">
     <div class="container">
       <div class="sec-head">
-        <p class="sec-label" appReveal><span>04</span>{{ 'experience.eyebrow' | transloco }}</p>
+        <p class="sec-label" appReveal>{{ 'experience.eyebrow' | transloco }}</p>
         <h2 class="sec-title" [appSplit]="'experience.title' | transloco"></h2>
       </div>
       <ol class="xp-list" appTimeline>
@@ -231,13 +229,13 @@
   <section class="section values" id="values">
     <div class="container">
       <div class="sec-head">
-        <p class="sec-label" appReveal><span>05</span>{{ 'values.eyebrow' | transloco }}</p>
+        <p class="sec-label" appReveal>{{ 'values.eyebrow' | transloco }}</p>
         <h2 class="sec-title" [appSplit]="'values.title' | transloco"></h2>
       </div>
       <div class="values-grid">
         @for (value of content.values; track value.id; let i = $index) {
           <div class="value" appReveal [style.--d]="i % 3">
-            <span class="value-index">{{ pad(i + 1) }}</span>
+            <span class="value-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path [attr.d]="icon(valueIcons, i)" /></svg></span>
             <h3>{{ value.title }}</h3>
             <p>{{ value.description }}</p>
           </div>
@@ -249,7 +247,7 @@
   <!-- ============================ CONTACT ============================= -->
   <section class="sheet sheet-ink cta" id="contact-cta">
     <div class="container">
-      <p class="sec-label" appReveal><span>06</span>{{ 'contact.eyebrow' | transloco }}</p>
+      <p class="sec-label" appReveal>{{ 'contact.eyebrow' | transloco }}</p>
       <h2 class="cta-title" [appSplit]="'contact.title' | transloco"></h2>
       <div class="cta-grid">
         <div appReveal>

@@ -25,9 +25,15 @@ import { ClockService } from './clock.service';
             <span class="pass-id">YY-2015</span>
           </header>
 
-          <div class="pass-avatar" aria-hidden="true">
-            <svg viewBox="0 0 32 32"><path d="M5 6l7 10v10M19 6l-7 10M19 6l4 6 4-6M23 12v14" /></svg>
-            <span class="pass-ring"></span>
+          <div class="pass-avatar">
+            <picture>
+              <source srcset="assets/img/profile.webp" type="image/webp" />
+              <img src="assets/img/profile.jpg" [alt]="name()" width="240" height="240" loading="lazy" decoding="async" />
+            </picture>
+            <span class="pass-ring" aria-hidden="true"></span>
+            <span class="pass-verified" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8" /></svg>
+            </span>
           </div>
 
           <h3 class="pass-name">{{ name() }}</h3>

@@ -48,7 +48,8 @@
     "discuss": "Discuss a similar project",
     "notFound": "Project not found",
     "backToWork": "Back to work",
-    "next": "Next project"
+    "next": "Next project",
+    "onThisPage": "On this page"
   },
   "stack": {
     "eyebrow": "Tech Stack",
