@@ -25,6 +25,19 @@ export class AdminApiService {
     return this.http.put<AdminSiteSettings>(`${this.base}/settings`, payload);
   }
 
+  // Profile photo (stored server-side in the database)
+  getPhoto(): Observable<{ url: string }> {
+    return this.http.get<{ url: string }>(`${this.base}/photo`);
+  }
+  uploadPhoto(image: Blob, filename: string): Observable<{ url: string }> {
+    const body = new FormData();
+    body.append('file', image, filename);
+    return this.http.post<{ url: string }>(`${this.base}/photo`, body);
+  }
+  deletePhoto(): Observable<void> {
+    return this.http.delete<void>(`${this.base}/photo`);
+  }
+
   // Generic CRUD (entity name maps to the API path)
   list<T>(entity: string): Observable<T[]> {
     return this.http.get<T[]>(`${this.base}/${entity}`);

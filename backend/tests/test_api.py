@@ -355,3 +355,40 @@ def test_database_url_is_pinned_to_psycopg2():
     assert normalize_database_url("postgresql://u:p@h:5432/db") == "postgresql+psycopg2://u:p@h:5432/db"
     assert normalize_database_url("postgresql+psycopg2://u:p@h/db") == "postgresql+psycopg2://u:p@h/db"
     assert normalize_database_url("sqlite:///./portfolio.db") == "sqlite:///./portfolio.db"
+
+
+def test_profile_photo_upload_serve_and_delete(client, auth_headers):
+    png = b"\x89PNG\r\n\x1a\n" + b"\x00" * 64
+
+    # No custom photo yet: public content advertises none
+    assert client.get("/api/content").json()["settings"]["photo_url"] == ""
+    assert client.get("/api/photo").status_code == 404
+
+    # Upload requires auth
+    assert client.post("/api/admin/photo", files={"file": ("p.png", png, "image/png")}).status_code == 401
+
+    # Bytes are sniffed: a fake "image" is rejected whatever its declared type
+    bad = client.post(
+        "/api/admin/photo", headers=auth_headers, files={"file": ("x.png", b"not an image", "image/png")}
+    )
+    assert bad.status_code == 415
+
+    ok = client.post("/api/admin/photo", headers=auth_headers, files={"file": ("p.png", png, "image/png")})
+    assert ok.status_code == 200
+    url = ok.json()["url"]
+    assert url.startswith("/api/photo?v=")
+    assert client.get("/api/content").json()["settings"]["photo_url"] == url
+
+    served = client.get(url)
+    assert served.status_code == 200
+    assert served.headers["content-type"] == "image/png"
+    assert served.content == png
+
+    assert client.delete("/api/admin/photo", headers=auth_headers).status_code == 204
+    assert client.get("/api/content").json()["settings"]["photo_url"] == ""
+
+
+def test_profile_photo_size_limit(client, auth_headers):
+    big = b"\xff\xd8\xff" + b"\x00" * (3 * 1024 * 1024)
+    response = client.post("/api/admin/photo", headers=auth_headers, files={"file": ("big.jpg", big, "image/jpeg")})
+    assert response.status_code == 413

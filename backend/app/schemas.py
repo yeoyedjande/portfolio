@@ -55,6 +55,11 @@ class PublicSettings(BaseModel):
     github_url: str
     cv_url: str
     contact_lead: str
+    photo_url: str = ""  # versioned URL of the admin-uploaded photo, "" = default
+
+
+class PhotoOut(BaseModel):
+    url: str  # "" when no custom photo is set
 
 
 class PublicStackItem(BaseModel):

@@ -4,15 +4,18 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AdminApiService } from '../../core/admin-api.service';
 import { AdminSiteSettings } from '../../core/models';
 import { fromLines, fromStr, toLines, toStr } from './i18n-form.util';
+import { PhotoEditorComponent } from './photo-editor.component';
 
 /** Edits the global bilingual site content. List-like fields are edited
  *  one item per line, in English and French side by side. */
 @Component({
   selector: 'app-admin-settings',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, PhotoEditorComponent],
   template: `
     <h1>Contenu du site</h1>
     <p class="admin-sub">Textes globaux dans les deux langues. Les changements sont en ligne dès l'enregistrement.</p>
+
+    <app-admin-photo />
 
     @if (loaded()) {
       <form [formGroup]="form" (ngSubmit)="save()">

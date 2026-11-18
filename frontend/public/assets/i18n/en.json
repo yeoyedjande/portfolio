@@ -83,7 +83,10 @@
       "emailError": "Please enter a valid email address.",
       "messageError": "Please write a short message (at least 10 characters).",
       "rateLimited": "Too many messages sent — please try again in a while."
-    }
+    },
+    "whatsapp": "Message me on WhatsApp",
+    "whatsappHint": "Quick reply",
+    "whatsappMessage": "Hello Yéo, I'm reaching out from your portfolio."
   },
   "footer": {
     "poweredBy": "This portfolio runs on code, ideas and a lot of passion.",

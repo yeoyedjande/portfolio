@@ -1,7 +1,7 @@
 """Authenticated CRUD endpoints used by the admin dashboard."""
 from datetime import datetime, timedelta, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -10,13 +10,14 @@ from ..database import get_db
 from ..models import (
     ContactMessage,
     Experience,
+    MediaAsset,
     PageView,
     Project,
     StackItem,
     ValueProp,
 )
 from ..security import get_current_admin
-from .public import get_site_settings
+from .public import PHOTO_KEY, get_site_settings, photo_url
 
 router = APIRouter(
     prefix="/api/admin",
@@ -40,6 +41,57 @@ def update_settings(payload: schemas.SiteSettingsUpdate, db: Session = Depends(g
     db.commit()
     db.refresh(settings)
     return settings
+
+
+# ---------- Profile photo ----------
+
+MAX_PHOTO_BYTES = 3 * 1024 * 1024
+# Magic numbers: trust the bytes, not the client-declared content type
+_IMAGE_SIGNATURES = {
+    "image/jpeg": (b"\xff\xd8\xff",),
+    "image/png": (b"\x89PNG\r\n\x1a\n",),
+    "image/webp": (b"RIFF",),
+}
+
+
+def _sniff_image(data: bytes) -> str | None:
+    for content_type, signatures in _IMAGE_SIGNATURES.items():
+        if any(data.startswith(sig) for sig in signatures):
+            if content_type == "image/webp" and data[8:12] != b"WEBP":
+                continue
+            return content_type
+    return None
+
+
+@router.get("/photo", response_model=schemas.PhotoOut)
+def read_photo(db: Session = Depends(get_db)):
+    return schemas.PhotoOut(url=photo_url(db))
+
+
+@router.post("/photo", response_model=schemas.PhotoOut)
+async def upload_photo(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    data = await file.read(MAX_PHOTO_BYTES + 1)
+    if len(data) > MAX_PHOTO_BYTES:
+        raise HTTPException(status_code=413, detail="Image too large (max 3 MB)")
+    content_type = _sniff_image(data)
+    if content_type is None:
+        raise HTTPException(status_code=415, detail="Unsupported image (JPEG, PNG or WebP only)")
+    asset = db.query(MediaAsset).filter(MediaAsset.key == PHOTO_KEY).first()
+    if asset is None:
+        asset = MediaAsset(key=PHOTO_KEY, content_type=content_type, data=data)
+        db.add(asset)
+    else:
+        asset.content_type = content_type
+        asset.data = data
+        asset.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    return schemas.PhotoOut(url=photo_url(db))
+
+
+@router.delete("/photo", status_code=status.HTTP_204_NO_CONTENT)
+def delete_photo(db: Session = Depends(get_db)):
+    db.query(MediaAsset).filter(MediaAsset.key == PHOTO_KEY).delete()
+    db.commit()
 
 
 # ---------- Generic CRUD helpers ----------
@@ -265,7 +317,7 @@ def _visit_stats(db: Session) -> schemas.VisitStats:
 
 @router.get("/stats", response_model=schemas.AdminStats)
 def admin_stats(db: Session = Depends(get_db)):
-    from .public import get_site_settings
+    from .public import PHOTO_KEY, get_site_settings, photo_url
 
     messages = db.query(ContactMessage).all()
     projects = db.query(Project).all()

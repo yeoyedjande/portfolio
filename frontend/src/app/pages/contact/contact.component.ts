@@ -1,12 +1,15 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { map } from 'rxjs';
 
 import { ApiService } from '../../core/api.service';
 import { LanguageService } from '../../core/language.service';
 import { MagneticDirective } from '../../shared/magnetic.directive';
 import { SplitComponent } from '../../shared/split.component';
+import { WHATSAPP_DISPLAY, WHATSAPP_ICON_PATH, whatsappUrl } from '../../shared/whatsapp';
 
 @Component({
   selector: 'app-contact',
@@ -14,13 +17,21 @@ import { SplitComponent } from '../../shared/split.component';
   template: `
     <section class="contact-page">
       <div class="container">
-        <p class="sec-label hero-in" style="--d: 0"><span>✉</span>{{ 'contact.eyebrow' | transloco }}</p>
+        <p class="sec-label hero-in" style="--d: 0">{{ 'contact.eyebrow' | transloco }}</p>
         <h1 class="contact-title" [appSplit]="'contact.title' | transloco" [splitImmediate]="true"></h1>
 
         <div class="contact-grid">
           <div class="hero-in" style="--d: 4">
             @if (api.content$ | async; as content) {
               <p class="contact-lead">{{ content.settings.contact_lead }}</p>
+              <a class="wa-cta" appMagnetic="0.15" [href]="waUrl()" target="_blank" rel="noopener">
+                <span class="wa-cta-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path [attr.d]="waIcon" /></svg></span>
+                <span class="wa-cta-text">
+                  <b>{{ 'contact.whatsapp' | transloco }}</b>
+                  <small>{{ 'contact.whatsappHint' | transloco }} · {{ waDisplay }}</small>
+                </span>
+                <i class="wa-cta-arrow" aria-hidden="true">↗</i>
+              </a>
               <div class="contact-links">
                 <a [href]="'mailto:' + content.settings.email">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m3 6 9 7 9-7"/></svg>
@@ -113,6 +124,14 @@ export class ContactComponent {
   api = inject(ApiService);
   private language = inject(LanguageService);
   private fb = inject(FormBuilder);
+
+  readonly waIcon = WHATSAPP_ICON_PATH;
+  readonly waDisplay = WHATSAPP_DISPLAY;
+  /** wa.me link with a greeting in the visitor's language. */
+  waUrl = toSignal(
+    inject(TranslocoService).selectTranslate('contact.whatsappMessage').pipe(map((text: string) => whatsappUrl(text))),
+    { initialValue: whatsappUrl('') }
+  );
 
   sending = signal(false);
   sent = signal(false);

@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { filter, map } from 'rxjs';
 
 import { ApiService } from '../core/api.service';
@@ -11,6 +11,7 @@ import { MotionService } from '../core/motion.service';
 import { ClockService } from './clock.service';
 import { MagneticDirective } from './magnetic.directive';
 import { WaveLinesComponent } from './wave-lines.component';
+import { whatsappUrl } from './whatsapp';
 
 /** "Curtain" footer: pinned beneath the page, revealed as the last section
  *  scrolls away. The giant wordmark is the signature of the site. */
@@ -28,6 +29,7 @@ import { WaveLinesComponent } from './wave-lines.component';
               @if (api.content$ | async; as content) {
                 <a class="footer-mail" [href]="'mailto:' + content.settings.email">{{ content.settings.email }}</a>
                 <ul class="footer-links">
+                  <li><a [href]="waUrl()" target="_blank" rel="noopener">WhatsApp ↗</a></li>
                   <li><a [href]="content.settings.linkedin_url" target="_blank" rel="noopener">LinkedIn ↗</a></li>
                   <li><a [href]="content.settings.github_url" target="_blank" rel="noopener">GitHub ↗</a></li>
                   @if (content.settings.cv_url) {
@@ -66,6 +68,10 @@ export class FooterComponent {
   private motion = inject(MotionService);
   private router = inject(Router);
   year = new Date().getFullYear();
+  waUrl = toSignal(
+    inject(TranslocoService).selectTranslate('contact.whatsappMessage').pipe(map((text: string) => whatsappUrl(text))),
+    { initialValue: whatsappUrl('') }
+  );
 
   isAdmin = toSignal(
     this.router.events.pipe(
