@@ -346,3 +346,12 @@ def test_visitor_details_and_summary(client, auth_headers):
 
     # Visitor endpoints require authentication
     assert client.get("/api/admin/visits").status_code in (401, 403)
+
+
+def test_database_url_is_pinned_to_psycopg2():
+    from app.database import normalize_database_url
+
+    assert normalize_database_url("postgres://u:p@h:5432/db") == "postgresql+psycopg2://u:p@h:5432/db"
+    assert normalize_database_url("postgresql://u:p@h:5432/db") == "postgresql+psycopg2://u:p@h:5432/db"
+    assert normalize_database_url("postgresql+psycopg2://u:p@h/db") == "postgresql+psycopg2://u:p@h/db"
+    assert normalize_database_url("sqlite:///./portfolio.db") == "sqlite:///./portfolio.db"
