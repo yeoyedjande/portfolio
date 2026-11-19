@@ -392,3 +392,24 @@ def test_profile_photo_size_limit(client, auth_headers):
     big = b"\xff\xd8\xff" + b"\x00" * (3 * 1024 * 1024)
     response = client.post("/api/admin/photo", headers=auth_headers, files={"file": ("big.jpg", big, "image/jpeg")})
     assert response.status_code == 413
+
+
+def test_whatsapp_number_admin_editable(client, auth_headers):
+    # Default until the admin changes it
+    assert client.get("/api/content").json()["settings"]["whatsapp"] == "+225 05 46 58 03 17"
+    assert client.get("/api/admin/whatsapp").status_code == 401
+
+    for bad in ("call me", "+225 12", "+1 234 567 890 123 456 789"):
+        response = client.put("/api/admin/whatsapp", headers=auth_headers, json={"number": bad})
+        assert response.status_code == 422, bad
+
+    ok = client.put("/api/admin/whatsapp", headers=auth_headers, json={"number": " +33 6 12 34 56 78 "})
+    assert ok.status_code == 200
+    assert ok.json() == {"number": "+33 6 12 34 56 78"}
+    assert client.get("/api/content?lang=fr").json()["settings"]["whatsapp"] == "+33 6 12 34 56 78"
+
+    # Empty hides the buttons
+    client.put("/api/admin/whatsapp", headers=auth_headers, json={"number": ""})
+    assert client.get("/api/content").json()["settings"]["whatsapp"] == ""
+
+    client.put("/api/admin/whatsapp", headers=auth_headers, json={"number": "+225 05 46 58 03 17"})

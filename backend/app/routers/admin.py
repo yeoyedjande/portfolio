@@ -12,12 +12,13 @@ from ..models import (
     Experience,
     MediaAsset,
     PageView,
+    SiteExtra,
     Project,
     StackItem,
     ValueProp,
 )
 from ..security import get_current_admin
-from .public import PHOTO_KEY, get_site_settings, photo_url
+from .public import PHOTO_KEY, WHATSAPP_KEY, get_site_settings, photo_url, whatsapp_number
 
 router = APIRouter(
     prefix="/api/admin",
@@ -41,6 +42,24 @@ def update_settings(payload: schemas.SiteSettingsUpdate, db: Session = Depends(g
     db.commit()
     db.refresh(settings)
     return settings
+
+
+# ---------- WhatsApp number ----------
+
+@router.get("/whatsapp", response_model=schemas.WhatsAppSetting)
+def read_whatsapp(db: Session = Depends(get_db)):
+    return schemas.WhatsAppSetting(number=whatsapp_number(db))
+
+
+@router.put("/whatsapp", response_model=schemas.WhatsAppSetting)
+def update_whatsapp(payload: schemas.WhatsAppSetting, db: Session = Depends(get_db)):
+    row = db.query(SiteExtra).filter(SiteExtra.key == WHATSAPP_KEY).first()
+    if row is None:
+        db.add(SiteExtra(key=WHATSAPP_KEY, value=payload.number))
+    else:
+        row.value = payload.number
+    db.commit()
+    return schemas.WhatsAppSetting(number=whatsapp_number(db))
 
 
 # ---------- Profile photo ----------
@@ -317,7 +336,7 @@ def _visit_stats(db: Session) -> schemas.VisitStats:
 
 @router.get("/stats", response_model=schemas.AdminStats)
 def admin_stats(db: Session = Depends(get_db)):
-    from .public import PHOTO_KEY, get_site_settings, photo_url
+    from .public import PHOTO_KEY, WHATSAPP_KEY, get_site_settings, photo_url, whatsapp_number
 
     messages = db.query(ContactMessage).all()
     projects = db.query(Project).all()

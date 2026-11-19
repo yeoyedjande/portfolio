@@ -25,6 +25,7 @@ from .models import (
     MediaAsset,
     PageView,
     Project,
+    SiteExtra,
     SiteSettings,
     StackItem,
     ValueProp,
@@ -59,7 +60,7 @@ def _snapshot_preserved_data() -> dict:
     Uses raw SQL so it works against an outdated schema; anything that cannot
     be read is simply skipped.
     """
-    preserved = {"admins": [], "messages": [], "page_views": [], "media": []}
+    preserved = {"admins": [], "messages": [], "page_views": [], "media": [], "extras": []}
     inspector = inspect(engine)
     with engine.connect() as conn:
         if inspector.has_table("admin_users"):
@@ -102,6 +103,12 @@ def _snapshot_preserved_data() -> dict:
                     text("SELECT key, content_type, data FROM media_assets")
                 ).fetchall()
                 preserved["media"] = [dict(row._mapping) for row in rows]
+            except Exception:
+                pass
+        if inspector.has_table("site_extras"):
+            try:
+                rows = conn.execute(text("SELECT key, value FROM site_extras")).fetchall()
+                preserved["extras"] = [dict(row._mapping) for row in rows]
             except Exception:
                 pass
     return preserved
@@ -153,6 +160,10 @@ def _restore_preserved_data(db, preserved: dict) -> None:
         for asset in preserved["media"]:
             db.add(MediaAsset(key=asset["key"], content_type=asset["content_type"], data=asset["data"]))
         print(f"Preserved {len(preserved['media'])} media asset(s) across the reset.")
+    if preserved.get("extras"):
+        for extra in preserved["extras"]:
+            db.add(SiteExtra(key=extra["key"], value=extra["value"] or ""))
+        print(f"Preserved {len(preserved['extras'])} site setting(s) across the reset.")
     # Make restored rows visible to the existence checks below (autoflush is off)
     db.flush()
 
@@ -160,7 +171,7 @@ def _restore_preserved_data(db, preserved: dict) -> None:
 def seed() -> None:
     settings = get_settings()
     assert_production_secrets(settings)
-    preserved = {"admins": [], "messages": [], "page_views": [], "media": []}
+    preserved = {"admins": [], "messages": [], "page_views": [], "media": [], "extras": []}
 
     if not schema_matches():
         if settings.reset_on_schema_mismatch:

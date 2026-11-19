@@ -1,8 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { map } from 'rxjs';
 
 import { ApiService } from '../../core/api.service';
@@ -20,7 +19,8 @@ import { ScrubComponent } from '../../shared/scrub.component';
 import { SplitComponent } from '../../shared/split.component';
 import { StackCardsDirective } from '../../shared/stack-cards.directive';
 import { TimelineDirective } from '../../shared/timeline.directive';
-import { WHATSAPP_ICON_PATH, whatsappUrl } from '../../shared/whatsapp';
+import { WhatsAppService } from '../../core/whatsapp.service';
+import { WHATSAPP_ICON_PATH } from '../../shared/whatsapp';
 
 @Component({
   selector: 'app-home',
@@ -48,10 +48,7 @@ export class HomeComponent {
   clock = inject(ClockService);
 
   readonly waIcon = WHATSAPP_ICON_PATH;
-  waUrl = toSignal(
-    inject(TranslocoService).selectTranslate('contact.whatsappMessage').pipe(map((text: string) => whatsappUrl(text))),
-    { initialValue: whatsappUrl('') }
-  );
+  wa = inject(WhatsAppService);
 
   /** Stack items grouped by category, preserving order of first appearance. */
   stackGroups$ = this.api.content$.pipe(

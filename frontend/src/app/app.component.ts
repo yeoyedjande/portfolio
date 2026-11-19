@@ -7,10 +7,11 @@ import { TrackingService } from './core/tracking.service';
 import { FooterComponent } from './shared/footer.component';
 import { HeaderComponent } from './shared/header.component';
 import { IntroComponent } from './shared/intro.component';
+import { WhatsAppFloatComponent } from './shared/whatsapp-float.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, TranslocoPipe, HeaderComponent, FooterComponent, IntroComponent],
+  imports: [RouterOutlet, TranslocoPipe, HeaderComponent, FooterComponent, IntroComponent, WhatsAppFloatComponent],
   template: `
     <app-intro />
     <div class="scroll-progress" aria-hidden="true"></div>
@@ -20,6 +21,7 @@ import { IntroComponent } from './shared/intro.component';
       <router-outlet />
     </main>
     <app-footer />
+    <app-whatsapp-float />
     <div class="grain" aria-hidden="true"></div>
   `,
 })

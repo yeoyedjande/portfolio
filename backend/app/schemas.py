@@ -1,7 +1,8 @@
+import re
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 # Translatable fields as stored in the database / edited in the admin:
 # {"en": "...", "fr": "..."} (or lists of strings per language).
@@ -56,6 +57,24 @@ class PublicSettings(BaseModel):
     cv_url: str
     contact_lead: str
     photo_url: str = ""  # versioned URL of the admin-uploaded photo, "" = default
+    whatsapp: str = ""  # WhatsApp number as displayed, "" = no WhatsApp buttons
+
+
+class WhatsAppSetting(BaseModel):
+    number: str = Field("", max_length=40)  # "" hides every WhatsApp button
+
+    @field_validator("number")
+    @classmethod
+    def _valid_phone(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            return ""
+        if not re.fullmatch(r"\+?[\d\s().-]+", value):
+            raise ValueError("Only digits, spaces, +, -, ., ( and ) are allowed")
+        digits = re.sub(r"\D", "", value)
+        if not 8 <= len(digits) <= 15:
+            raise ValueError("Use the international format, e.g. +225 05 46 58 03 17")
+        return value
 
 
 class PhotoOut(BaseModel):

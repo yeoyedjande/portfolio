@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from .. import schemas
@@ -17,6 +18,7 @@ from ..models import (
     MediaAsset,
     PageView,
     Project,
+    SiteExtra,
     SiteSettings,
     StackItem,
     ValueProp,
@@ -34,6 +36,18 @@ def get_site_settings(db: Session) -> SiteSettings:
 
 
 PHOTO_KEY = "profile_photo"
+WHATSAPP_KEY = "whatsapp"
+DEFAULT_WHATSAPP = "+225 05 46 58 03 17"
+
+
+def whatsapp_number(db: Session) -> str:
+    """WhatsApp number as set in the admin (default until first edited)."""
+    try:
+        row = db.query(SiteExtra).filter(SiteExtra.key == WHATSAPP_KEY).first()
+    except SQLAlchemyError:  # table not created yet (seed not run): use the default
+        db.rollback()
+        return DEFAULT_WHATSAPP
+    return DEFAULT_WHATSAPP if row is None else row.value
 
 
 def photo_url(db: Session) -> str:
@@ -42,11 +56,15 @@ def photo_url(db: Session) -> str:
     The version (upload timestamp) busts browser/CDN caches on every change,
     so the image itself can be cached forever.
     """
-    row = (
-        db.query(MediaAsset.updated_at)
-        .filter(MediaAsset.key == PHOTO_KEY)
-        .first()
-    )
+    try:
+        row = (
+            db.query(MediaAsset.updated_at)
+            .filter(MediaAsset.key == PHOTO_KEY)
+            .first()
+        )
+    except SQLAlchemyError:  # table not created yet (seed not run): use the default
+        db.rollback()
+        return ""
     if row is None:
         return ""
     return f"/api/photo?v={int(row.updated_at.timestamp())}"
@@ -66,7 +84,9 @@ def get_photo(db: Session = Depends(get_db)):
 
 # ---------- Language resolution (i18n dict -> plain string/list) ----------
 
-def _settings_public(s: SiteSettings, lang: str, photo: str = "") -> schemas.PublicSettings:
+def _settings_public(
+    s: SiteSettings, lang: str, photo: str = "", whatsapp: str = ""
+) -> schemas.PublicSettings:
     return schemas.PublicSettings(
         full_name=s.full_name,
         headline=resolve(s.headline, lang),
@@ -84,6 +104,7 @@ def _settings_public(s: SiteSettings, lang: str, photo: str = "") -> schemas.Pub
         cv_url=resolve(s.cv_url, lang),
         contact_lead=resolve(s.contact_lead, lang),
         photo_url=photo,
+        whatsapp=whatsapp,
     )
 
 
@@ -124,7 +145,7 @@ def get_content(lang: str = Query("en"), db: Session = Depends(get_db)):
     """Aggregated payload used by the public site: one request, all content."""
     lang = normalize_lang(lang)
     return schemas.PortfolioContent(
-        settings=_settings_public(get_site_settings(db), lang, photo_url(db)),
+        settings=_settings_public(get_site_settings(db), lang, photo_url(db), whatsapp_number(db)),
         stack=[
             schemas.PublicStackItem(
                 id=i.id, category=resolve(i.category, lang), name=i.name, sort_order=i.sort_order

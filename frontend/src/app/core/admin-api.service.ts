@@ -38,6 +38,14 @@ export class AdminApiService {
     return this.http.delete<void>(`${this.base}/photo`);
   }
 
+  // WhatsApp number ("" hides the WhatsApp buttons)
+  getWhatsApp(): Observable<{ number: string }> {
+    return this.http.get<{ number: string }>(`${this.base}/whatsapp`);
+  }
+  updateWhatsApp(number: string): Observable<{ number: string }> {
+    return this.http.put<{ number: string }>(`${this.base}/whatsapp`, { number });
+  }
+
   // Generic CRUD (entity name maps to the API path)
   list<T>(entity: string): Observable<T[]> {
     return this.http.get<T[]>(`${this.base}/${entity}`);

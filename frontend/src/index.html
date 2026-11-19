@@ -39,13 +39,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@1,9..144,300..700,50,0&family=Geist+Mono:wght@400;500&family=Manrope:wght@400..800&display=swap">
   <script>
-    // The first-visit intro starts on ink: paint the boot screen ink too so
-    // there is no paper → ink flash while Angular boots.
+    // The home intro starts on ink: paint the boot screen ink too so there
+    // is no paper → ink flash while Angular boots.
     (function () {
       try {
         var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-        var seen = sessionStorage.getItem('intro_seen') === '1';
-        if (!reduced && !seen && location.pathname.indexOf('/admin') !== 0) {
+        var isHome = /^\/(en|fr)?\/?$/.test(location.pathname);
+        if (!reduced && isHome) {
           document.documentElement.className += ' boot-dark';
         }
       } catch (e) {}
