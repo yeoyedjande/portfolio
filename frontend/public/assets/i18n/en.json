@@ -91,11 +91,11 @@
     "whatsappAria": "Open the WhatsApp conversation"
   },
   "footer": {
-    "poweredBy": "This portfolio runs on code, ideas and a lot of passion.",
     "backToTop": "Back to top",
     "reach": "Get in touch",
     "local": "Home base",
-    "timezone": "GMT+0 — overlaps European and Canadian (morning) working hours."
+    "timezone": "GMT+0 — overlaps European and Canadian (morning) working hours.",
+    "rights": "All rights reserved"
   },
   "meta": {
     "homeTitle": "Yeo Yedjande — Senior Full Stack Developer",

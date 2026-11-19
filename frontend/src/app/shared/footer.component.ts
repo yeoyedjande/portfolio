@@ -66,7 +66,7 @@ import { WhatsAppService } from '../core/whatsapp.service';
 
           <div class="footer-bottom">
             <span>© {{ year }} Yéo Yédjandé</span>
-            <span>{{ 'footer.poweredBy' | transloco }}</span>
+            <span>{{ 'footer.rights' | transloco }}</span>
           </div>
         </div>
       </footer>
