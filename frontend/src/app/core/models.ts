@@ -22,6 +22,8 @@ export interface SiteSettings {
   contact_lead: string;
   /** Versioned URL of the admin-uploaded photo; "" means use the default. */
   photo_url?: string;
+  /** WhatsApp number as displayed; "" hides the WhatsApp buttons. */
+  whatsapp?: string;
 }
 
 export interface StackItem {

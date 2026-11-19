@@ -86,7 +86,9 @@
     },
     "whatsapp": "Message me on WhatsApp",
     "whatsappHint": "Quick reply",
-    "whatsappMessage": "Hello Yéo, I'm reaching out from your portfolio."
+    "whatsappMessage": "Hello Yéo, I'm reaching out about a project.",
+    "whatsappFloat": "Let's talk about your project",
+    "whatsappAria": "Open the WhatsApp conversation"
   },
   "footer": {
     "poweredBy": "This portfolio runs on code, ideas and a lot of passion.",

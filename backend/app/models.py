@@ -166,3 +166,17 @@ class MediaAsset(Base):
     content_type: Mapped[str] = mapped_column(String(40))
     data: Mapped[bytes] = mapped_column(LargeBinary)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+
+class SiteExtra(Base):
+    """Key/value site settings added after launch (e.g. the WhatsApp number).
+
+    Kept in their own table so new settings never alter `site_settings`:
+    the startup schema check would otherwise reset existing content.
+    """
+
+    __tablename__ = "site_extras"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    key: Mapped[str] = mapped_column(String(60), unique=True, index=True)
+    value: Mapped[str] = mapped_column(String(255), default="")

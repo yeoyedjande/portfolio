@@ -86,7 +86,9 @@
     },
     "whatsapp": "Écrire sur WhatsApp",
     "whatsappHint": "Réponse rapide",
-    "whatsappMessage": "Bonjour Yéo, je vous contacte depuis votre portfolio."
+    "whatsappMessage": "Bonjour Yéo, je vous contacte pour un projet.",
+    "whatsappFloat": "Discutons de votre projet",
+    "whatsappAria": "Ouvrir la conversation WhatsApp"
   },
   "footer": {
     "poweredBy": "Ce portfolio est propulsé par du code, des idées et beaucoup de passion.",
