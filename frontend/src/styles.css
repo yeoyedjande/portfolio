@@ -175,6 +175,7 @@ html.menu-open .wa-float { opacity: 0; transform: scale(0.6); pointer-events: no
   pointer-events: none;
 }
 .wa-float:hover .wa-float-label, .wa-float:focus-visible .wa-float-label, .wa-float.is-talking .wa-float-label { opacity: 1; transform: none; }
+.wa-float.is-quiet .wa-float-label { opacity: 0; transform: translateX(14px) scale(0.92); }
 .wa-float:hover .wa-float-btn { transform: scale(1.08) rotate(-8deg); box-shadow: 0 20px 40px -12px rgba(18, 161, 80, 0.9); }
 .wa-float:hover .wa-float-btn svg { transform: rotate(8deg); }
 .wa-float.is-talking .wa-float-btn svg { animation: wa-wiggle 1.2s ease-in-out 2; }

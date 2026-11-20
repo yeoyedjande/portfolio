@@ -1,4 +1,4 @@
-import { Component, OnDestroy, effect, inject, signal } from '@angular/core';
+import { Component, NgZone, OnDestroy, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -19,7 +19,8 @@ import { WHATSAPP_ICON_PATH } from './whatsapp';
       <a
         class="wa-float"
         [class.is-in]="motion.ready()"
-        [class.is-talking]="talking()"
+        [class.is-talking]="talking() && !footerVisible()"
+        [class.is-quiet]="footerVisible()"
         [href]="wa.url()"
         target="_blank"
         rel="noopener"
@@ -37,9 +38,19 @@ import { WHATSAPP_ICON_PATH } from './whatsapp';
 export class WhatsAppFloatComponent implements OnDestroy {
   wa = inject(WhatsAppService);
   motion = inject(MotionService);
+  private zone = inject(NgZone);
   readonly icon = WHATSAPP_ICON_PATH;
   talking = signal(false);
+  /** True while any part of the footer is on screen: the label would cover
+   *  the footer's bottom line, so it stays folded (the button remains). */
+  footerVisible = signal(false);
   private timers: ReturnType<typeof setTimeout>[] = [];
+  private offScroll = this.motion.onScrollFrame((y) => {
+    const footer = document.querySelector<HTMLElement>('.site-footer');
+    const remaining = document.documentElement.scrollHeight - (y + window.innerHeight);
+    const visible = !!footer && remaining < footer.offsetHeight;
+    if (visible !== this.footerVisible()) this.zone.run(() => this.footerVisible.set(visible));
+  });
 
   isAdmin = toSignal(
     inject(Router).events.pipe(
@@ -68,6 +79,7 @@ export class WhatsAppFloatComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.offScroll();
     this.timers.forEach(clearTimeout);
   }
 }
